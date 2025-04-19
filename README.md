@@ -1,2 +1,10 @@
 # ChromaPID
-Este repo es un lugar donde se suben actualizaciones y codigos, de diferentes pruebas para la deteccion de color mediante foto, o imagen precargada, se hace un control PID para control de temperatura para el tanque de pintura, se envian los valores PWM de los valores CMYK a bombas, para dar el color final.
+Este repositorio recopila el desarrollo y las actualizaciones de un sistema de detección y control de color con múltiples funcionalidades integradas. El sistema está compuesto por dos módulos principales que se comunican entre sí mediante puerto serial y que operan sobre diferentes plataformas Raspberry Pi, optimizadas para tareas específicas.
+
+Por un lado, se implementa una Raspberry Pi Zero 2 W como servidor principal, la cual ejecuta código en Python puro. Esta unidad se encarga de capturar imágenes en tiempo real desde una cámara o procesar imágenes precargadas, detectar el color predominante, convertir los valores al espacio de color CMYK, y aplicar un algoritmo de control PID para regular la temperatura de un tanque de pintura. Los datos procesados se estructuran en formato JSON y se transmiten a través de la interfaz serial.
+
+Por otro lado, se utiliza una Raspberry Pi Pico W programada en MicroPython, elegida por su capacidad de controlar múltiples salidas PWM de forma eficiente. Esta unidad actúa como módulo de control y recepción: interpreta los datos JSON recibidos desde la Zero 2 W, y convierte los valores CMYK y RGB en señales PWM. Estas señales se envían a los actuadores correspondientes, como bombas peristálticas o válvulas, permitiendo la dosificación precisa de pigmentos para obtener el color final deseado.
+
+
+##Futuras mejoras
+Se planea migrar la arquitectura actual hacia un modelo más escalable y desacoplado mediante la implementación de un servidor MQTT. De esta manera, la Raspberry Pi Pico W actuará únicamente como cliente suscriptor, recibiendo los datos de color y control desde un servidor externo a través de tópicos específicos. Esta actualización permitirá centralizar la lógica de procesamiento en un nodo principal (por ejemplo, la Raspberry Pi Zero 2 W u otra unidad con mayores capacidades de cómputo), facilitando la integración con otros dispositivos IoT, habilitando monitoreo en tiempo real desde múltiples interfaces, y mejorando la robustez de la comunicación entre módulos.
