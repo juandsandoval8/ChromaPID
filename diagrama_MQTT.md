@@ -18,12 +18,18 @@ flowchart TD
         %% PWM
         I --> M["4 Canales CMYK (Bombas de Tinta)"]
         I --> N["3 Canales RGB (LED HUE Casero)"]
-        I --> O["1 Canal PWM PID (Control Térmico)"]
 
-        %% Lectura de Temperatura (Local)
-        subgraph Temperatura["Sistema de Monitoreo Local"]
-            J["Sensor DS18B20 (sumergible)"] --> P["Lectura de Temperatura Interna"]
-            P --> O
+        %% Temperatura - Control Independiente
+        subgraph Temperatura["Sistema de Control Térmico por Tanque"]
+            J1["Sensor de Temperatura Cian"] --> P1["PID Cian"]
+            J2["Sensor de Temperatura Magenta"] --> P2["PID Magenta"]
+            J3["Sensor de Temperatura Amarillo"] --> P3["PID Amarillo"]
+            J4["Sensor de Temperatura Negro"] --> P4["PID Negro"]
+
+            P1 --> T1["PWM Calefactor Cian"]
+            P2 --> T2["PWM Calefactor Magenta"]
+            P3 --> T3["PWM Calefactor Amarillo"]
+            P4 --> T4["PWM Calefactor Negro"]
         end
 
         %% Bombas
@@ -31,16 +37,23 @@ flowchart TD
         R --> S["4 Bombas de Pintura (Cian, Magenta, Amarillo, Negro)"]
 
         %% Mezclador
-        L["Control Manual del Mezclador"] --> T["Botón Físico de Activación"]
+        L["Control Manual del Mezclador"] --> Z["Botón Físico de Activación"]
+
+        %% Ventilador Auxiliar
+        I --> O["Canal PWM Ventilador General"]
     end
 
     %% ================= PERIFÉRICOS =================
     subgraph Periféricos["Periféricos y Estructura Física"]
         N --> U["LED HUE Casero (Simulación de Color con PWM RGB)"]
-        M --> V["Tanques Metálicos de Tinta CMYK"]
-        O --> W["Sistema de Refrigeración Controlado (Ventilador PWM)"]
+        M --> V["Tanques Metálicos de Tinta CMYK (Calefaccionados)"]
+        T1 --> V
+        T2 --> V
+        T3 --> V
+        T4 --> V
+        O --> W["Ventilador PWM Auxiliar de Sistema"]
         S --> Y["Mezcla de Pintura"]
-        T --> Z["Motor de Mezclado"]
+        Z --> X["Motor de Mezclado"]
     end
 
     %% ================= ESTILOS =================
