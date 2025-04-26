@@ -7,7 +7,7 @@ flowchart TD
         D["Carga Manual de Imágenes"] --> B
         B --> E["Conversión RGB a CMYK"]
         E --> F["Empaquetado Formato JSON (Colores)"]
-        F --> G["Publicación por MQTT"]
+        F --> G["Publicación por MQTT (Única salida)"]
     end
 
     %% ================= ESCLAVO (Raspberry Pi Pico W) =================
@@ -16,15 +16,15 @@ flowchart TD
         H --> I["Control PWM de Salidas"]
 
         %% PWM
-        I --> M["4 Canales CMYK (Bombas de Tinta)"]
-        I --> N["3 Canales RGB (LED HUE Casero)"]
+        I --> M["4 Canales PWM CMYK (Bombas de Tinta)"]
+        I --> N["3 Canales PWM RGB (LED HUE Casero)"]
 
         %% Temperatura - Control Independiente
         subgraph Temperatura["Sistema de Control Térmico por Tanque"]
-            J1["Sensor de Temperatura Cian"] --> P1["PID Cian"]
-            J2["Sensor de Temperatura Magenta"] --> P2["PID Magenta"]
-            J3["Sensor de Temperatura Amarillo"] --> P3["PID Amarillo"]
-            J4["Sensor de Temperatura Negro"] --> P4["PID Negro"]
+            J1["Sensor de Temperatura Cian (DS18B20)"] --> P1["PID Control Cian"]
+            J2["Sensor de Temperatura Magenta (DS18B20)"] --> P2["PID Control Magenta"]
+            J3["Sensor de Temperatura Amarillo (DS18B20)"] --> P3["PID Control Amarillo"]
+            J4["Sensor de Temperatura Negro (DS18B20)"] --> P4["PID Control Negro"]
 
             P1 --> T1["PWM Calefactor Cian"]
             P2 --> T2["PWM Calefactor Magenta"]
@@ -51,8 +51,8 @@ flowchart TD
         T2 --> V
         T3 --> V
         T4 --> V
-        O --> W["Ventilador PWM Auxiliar de Sistema"]
-        S --> Y["Mezcla de Pintura"]
+        O --> W["Ventilador PWM Auxiliar del Sistema"]
+        S --> Y["Sistema de Mezcla de Pintura"]
         Z --> X["Motor de Mezclado"]
     end
 
@@ -64,4 +64,5 @@ flowchart TD
     style G fill:#fff2cc,stroke:#ff9900,stroke-width:1px
     style V fill:#f9f,stroke:#333
     style U fill:#f9f,stroke:#333
+
 ```
