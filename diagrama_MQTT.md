@@ -7,11 +7,12 @@ flowchart TD
         D["Carga Manual de Imágenes"] --> B
         B --> E["Conversión RGB a CMYK"]
         E --> F["Empaquetado Formato JSON (Colores)"]
+        F --> G["Publicación por MQTT"]
     end
 
     %% ================= ESCLAVO (Raspberry Pi Pico W) =================
     subgraph Esclavo["Raspberry Pi Pico W (Módulo de Control)"]
-        F --> H["Recepción de JSON por MQTT (Colores)"]
+        G --> H["Recepción de JSON por MQTT (Colores)"]
         H --> I["Control PWM de Salidas"]
 
         %% PWM
@@ -42,17 +43,12 @@ flowchart TD
         T --> Z["Motor de Mezclado"]
     end
 
-    %% ================= COMUNICACIÓN =================
-    subgraph Comunicación["Comunicación"]
-        F -->|MQTT| H
-    end
-
     %% ================= ESTILOS =================
     style Maestro fill:#e6f3ff,stroke:#0066cc,stroke-width:2px
     style Esclavo fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
     style Temperatura fill:#ffe0b3,stroke:#cc6600,stroke-width:2px
     style Periféricos fill:#f0f0f0,stroke:#666,stroke-width:1px
-    style Comunicación fill:#fff2cc,stroke:#ff9900,stroke-width:1px
+    style G fill:#fff2cc,stroke:#ff9900,stroke-width:1px
     style V fill:#f9f,stroke:#333
     style U fill:#f9f,stroke:#333
 ```
