@@ -1,3 +1,4 @@
+```mermaid
 flowchart TD
     %% ================= MAESTRO (Raspberry Pi Zero 2W) =================
     subgraph Maestro["Raspberry Pi Zero 2W (Servidor Principal)"]
@@ -54,3 +55,4 @@ flowchart TD
     style Comunicacion fill:#fff2cc,stroke:#ff9900,stroke-width:1px
     style V fill:#f9f,stroke:#333
     style U fill:#f9f,stroke:#333
+```
