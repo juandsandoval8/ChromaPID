@@ -7,7 +7,7 @@ flowchart TD
         D["Carga Manual de Imágenes"] --> B
         B --> E["Conversión RGB a CMYK"]
         E --> F["Empaquetado Formato JSON (Colores (CMYK y RGB))"]
-        F --> G["Publicación por MQTT"]
+        F --> G["Comunicación por MQTT"]
     end
 
     %% ================= ESCLAVO (Raspberry Pi Pico W) =================
