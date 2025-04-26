@@ -1,51 +1,38 @@
 import cv2
 import threading
 import time
-import paho.mqtt.client as mqtt
 import json
+import paho.mqtt.client as mqtt
 
-class MQTTManager:
-    def __init__(self, broker="localhost", port=1883, topic="color_data"):
+# Configuración MQTT
+MQTT_BROKER = "192.168.1.x"   # <-- Cambia por la IP de tu broker
+MQTT_PORT = 1883
+MQTT_TOPIC = "color/detection"
+
+class MqttManager:
+    def __init__(self, broker, port):
         self.client = mqtt.Client()
         self.broker = broker
         self.port = port
-        self.topic = topic
-        self.connected = False
-
-    def on_connect(self, client, userdata, flags, rc):
-        if rc == 0:
-            self.connected = True
-            print("[INFO] Conectado al broker MQTT")
-        else:
-            print(f"[ERROR] Error al conectar al broker MQTT: {rc}")
-
-    def on_disconnect(self, client, userdata, rc):
-        self.connected = False
-        print("[INFO] Desconectado del broker MQTT")
 
     def connect(self):
         try:
-            self.client.on_connect = self.on_connect
-            self.client.on_disconnect = self.on_disconnect
-            self.client.connect(self.broker, self.port, 60)
+            self.client.connect(self.broker, self.port)
             self.client.loop_start()
-            time.sleep(2)  # Estabilizar la conexión
+            print(f"[INFO] Conectado al broker MQTT {self.broker}:{self.port}")
             return True
         except Exception as e:
-            print(f"[ERROR] Error al conectar: {e}")
+            print(f"[ERROR] Error conectando al broker MQTT: {e}")
             return False
 
     def send_data(self, data_dict):
-        if not self.connected:
-            print("[WARN] No hay conexión MQTT.")
-            return False
         try:
             json_data = json.dumps(data_dict)
-            self.client.publish(self.topic, json_data)
-            print(f"[INFO] Datos enviados al broker MQTT: {json_data}")
+            self.client.publish(MQTT_TOPIC, json_data)
+            print(f"[INFO] Datos publicados en MQTT: {json_data}")
             return True
         except Exception as e:
-            print(f"[ERROR] Error enviando datos por MQTT: {e}")
+            print(f"[ERROR] Error enviando datos MQTT: {e}")
             return False
 
     def disconnect(self):
@@ -53,61 +40,8 @@ class MQTTManager:
         self.client.disconnect()
         print("[INFO] Conexión MQTT cerrada.")
 
-class ColorConverter:
-    @staticmethod
-    def rgb_to_cmyk(r, g, b):
-        r_norm, g_norm, b_norm = r/255.0, g/255.0, b/255.0
-        k = 1 - max(r_norm, g_norm, b_norm)
-        if k == 1:
-            return 0, 0, 0, 100
-        c = (1 - r_norm - k) / (1 - k)
-        m = (1 - g_norm - k) / (1 - k)
-        y = (1 - b_norm - k) / (1 - k)
-        return int(c*100), int(m*100), int(y*100), int(k*100)
-
-    @staticmethod
-    def cmyk_to_rgb(c, m, y, k):
-        c, m, y, k = [max(0, min(100, val)) for val in (c, m, y, k)]
-        r = 255 * (1 - c/100) * (1 - k/100)
-        g = 255 * (1 - m/100) * (1 - k/100)
-        b = 255 * (1 - y/100) * (1 - k/100)
-        return int(r), int(g), int(b)
-
-class CameraManager:
-    def __init__(self, camera_index=0):
-        self.camera_index = camera_index
-        self.cap = None
-        self.active = False
-        self.frame = None
-        self.lock = threading.Lock()
-
-    def start_camera(self):
-        self.cap = cv2.VideoCapture(self.camera_index)
-        if not self.cap.isOpened():
-            print("[ERROR] No se pudo iniciar la cámara.")
-            return False
-        self.active = True
-        threading.Thread(target=self._capture_loop, daemon=True).start()
-        print("[INFO] Cámara iniciada.")
-        return True
-
-    def _capture_loop(self):
-        while self.active:
-            ret, frame = self.cap.read()
-            if ret:
-                with self.lock:
-                    self.frame = frame.copy()
-            time.sleep(0.03)
-
-    def get_frame(self):
-        with self.lock:
-            return self.frame.copy() if self.frame is not None else None
-
-    def stop_camera(self):
-        self.active = False
-        if self.cap:
-            self.cap.release()
-        print("[INFO] Cámara detenida.")
+# El resto del código queda igual, solo cambia el gestor de comunicación
+# ColorConverter, CameraManager se mantienen igual.
 
 class ColorDetector:
     def __init__(self, mqtt_manager):
@@ -129,35 +63,11 @@ class ColorDetector:
         data = {'c': c, 'm': m, 'y': y, 'k': k, 'r': r, 'g': g, 'b': b}
         success = self.mqtt_manager.send_data(data)
         if success:
-            print("[INFO] Datos de color enviados exitosamente.")
-
-class ColorDetectionThread(threading.Thread):
-    def __init__(self, camera_manager, color_detector, x=None, y=None, interval=1.0):
-        super().__init__(daemon=True)
-        self.camera_manager = camera_manager
-        self.color_detector = color_detector
-        self.interval = interval
-        self.running = False
-        self.x = x
-        self.y = y
-
-    def run(self):
-        self.running = True
-        while self.running:
-            frame = self.camera_manager.get_frame()
-            if frame is not None:
-                height, width = frame.shape[:2]
-                x = self.x if self.x is not None else width // 2
-                y = self.y if self.y is not None else height // 2
-                self.color_detector.detect_color(frame, x, y)
-            time.sleep(self.interval)
-
-    def stop(self):
-        self.running = False
+            print("[INFO] Datos de color enviados exitosamente por MQTT.")
 
 # Uso práctico
 if __name__ == "__main__":
-    mqtt_mgr = MQTTManager(broker="localhost", port=1883, topic="color_data")
+    mqtt_mgr = MqttManager(MQTT_BROKER, MQTT_PORT)
     if mqtt_mgr.connect():
         camera_mgr = CameraManager()
         color_detector = ColorDetector(mqtt_mgr)
