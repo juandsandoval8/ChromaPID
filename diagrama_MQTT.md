@@ -38,9 +38,6 @@ flowchart TD
 
         %% Mezclador
         L["Control Manual del Mezclador"] --> Z["Botón Físico de Activación"]
-
-        %% Ventilador Auxiliar
-        I --> O["Canal PWM Ventilador General"]
     end
 
     %% ================= PERIFÉRICOS =================
@@ -51,7 +48,6 @@ flowchart TD
         T2 --> V
         T3 --> V
         T4 --> V
-        O --> W["Ventilador PWM Auxiliar del Sistema"]
         S --> Y["Sistema de Mezcla de Pintura"]
         Z --> X["Motor de Mezclado"]
     end
@@ -64,5 +60,6 @@ flowchart TD
     style G fill:#fff2cc,stroke:#ff9900,stroke-width:1px
     style V fill:#f9f,stroke:#333
     style U fill:#f9f,stroke:#333
+
 
 ```
