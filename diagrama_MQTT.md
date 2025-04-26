@@ -1,51 +1,56 @@
-```mermaid
 flowchart TD
     %% ================= MAESTRO (Raspberry Pi Zero 2W) =================
     subgraph Maestro["Raspberry Pi Zero 2W (Servidor Principal)"]
-        A["Cámara Web (OpenCV)"] --> B[Selección de Color (Node-RED Dashboard)]
-        D["Carga Manual de Imágenes"] --> B
-        B --> E{{"Conversión RGB → CMYK"}}
-        E --> F[Formato JSON]
-        F --> G[Publicación MQTT (topic: color/detection)]
+        A["Camara Web OpenCV"] --> B["Seleccion de Color en Node-RED Dashboard"]
+        C["Sensor RGB Digital"] --> B
+        D["Carga Manual de Imagenes"] --> B
+        B --> E["Conversion RGB a CMYK"]
+        E --> F["Simulacion LED HUE Casero"]
+        E --> G["Empaquetado Formato JSON"]
     end
 
     %% ================= ESCLAVO (Raspberry Pi Pico W) =================
-    subgraph Esclavo["Raspberry Pi Pico W (Módulo de Control)"]
-        G --> H{{"Recepción JSON (via MQTT)"}}
-        H --> I[Parseo de Datos]
+    subgraph Esclavo["Raspberry Pi Pico W (Modulo de Control)"]
+        G --> H["Recepcion de JSON por MQTT"]
+        H --> I["Control PWM"]
+        H --> J["Lectura de Temperatura DS18B20"]
+        H --> K["Activacion de Bombas de Pintura"]
+        H --> L["Control Manual del Mezclador"]
 
-        %% PWM Outputs
-        I --> J[Actualización de PWM]
-        J --> J1["4 Canales CMYK (GP0-GP3)"]
-        J --> J2["3 Canales RGB (GP4-GP6)"]
-        J --> J3["1 Canal PID / Ventilador / Calefactor (GP7)"]
+        %% PWM
+        I --> M["4 Canales CMYK (Bombas)"]
+        I --> N["3 Canales RGB (Bombas)"]
+        I --> O["1 Canal PWM PID (Control Termico)"]
 
-        %% Sensado de Temperatura
-        I --> K[Lectura de Temperatura]
-        K --> K1["Sensor DS18B20 (OneWire en GP16)"]
+        %% Termico
+        J --> P["Sensor DS18B20"]
 
-        %% Indicadores
-        I --> M["LED Onboard Pico W: Indicador de Actividad"]
+        %% Bombas
+        K --> R["Puentes H L298N"]
+        R --> S["4 Bombas de Pintura (Cian, Magenta, Amarillo, Negro)"]
+
+        %% Mezclador
+        L --> T["Boton Fisico de Activacion"]
     end
 
-    %% ================= PERIFÉRICOS =================
-    subgraph Periféricos["Periféricos y Estructura Física"]
-        J1 --> N["Tanques de Tinta CMYK + Bombas de Pintura"]
-        J2 --> P["LED HUE Casero (RGB con PWM)"]
-        J3 --> R["Ventilador o Calefactor (Control PID)"]
-        K1 --> Q["Lectura de Temperatura en Mezcla"]
+    %% ================= PERIFERICOS =================
+    subgraph Perifericos["Perifericos y Estructura Fisica"]
+        F --> U["LED HUE Casero (Simulacion de Color)"]
+        M --> V["Tanques Metalicos de CMYK"]
+        O --> W["Sistema de Refrigeracion Controlado"]
+        S --> Y["Mezclador de Pintura"]
+        T --> Z["Motor de Mezclado"]
     end
 
-    %% ================= COMUNICACIÓN =================
-    subgraph Comunicación["Comunicación"]
-        G -->|MQTT (Broker local)| H
+    %% ================= COMUNICACION =================
+    subgraph Comunicacion["Comunicacion"]
+        G -->|MQTT| H
     end
 
     %% ================= ESTILOS =================
     style Maestro fill:#e6f3ff,stroke:#0066cc,stroke-width:2px
     style Esclavo fill:#ffe6e6,stroke:#cc0000,stroke-width:2px
-    style Periféricos fill:#f0f0f0,stroke:#666,stroke-width:1px
-    style Comunicación fill:#fff2cc,stroke:#ff9900,stroke-width:1px
-    style P fill:#ffccff,stroke:#990099,stroke-width:2px
-    style M fill:#ccffcc,stroke:#009900,stroke-width:2px
-```
+    style Perifericos fill:#f0f0f0,stroke:#666,stroke-width:1px
+    style Comunicacion fill:#fff2cc,stroke:#ff9900,stroke-width:1px
+    style V fill:#f9f,stroke:#333
+    style U fill:#f9f,stroke:#333
