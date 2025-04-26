@@ -22,7 +22,7 @@ flowchart TD
 
         %% Lectura de Temperatura (Local)
         subgraph Temperatura["Sistema de Monitoreo Local"]
-            J["Sensor DS18B20"] --> P["Lectura de Temperatura Interna"]
+            J["Sensor DS18B20 (sumergible)"] --> P["Lectura de Temperatura Interna"]
             P --> O
         end
 
