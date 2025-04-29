@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 import json
 
 # === Configura MQTT ===
-MQTT_BROKER = "192.168.x"  # Cambia si usas otro servidor MQTT
+MQTT_BROKER = "192.168.17"  # Cambia si usas otro servidor MQTT
 MQTT_PORT = 1883
 MQTT_TOPIC_PUB = "sensor/color/rgb"
 MQTT_TOPIC_SUB = "sensor/color/echo"
