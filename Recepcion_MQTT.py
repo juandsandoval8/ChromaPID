@@ -12,7 +12,7 @@ WIFI_SSID = "tu_ssid"
 WIFI_PASSWORD = "tu_password"
 
 # == Configuración MQTT ==
-MQTT_BROKER = "192.168.1.x"  # IP del broker MQTT
+MQTT_BROKER = "192.168.1.17"  # IP del broker MQTT
 MQTT_TOPIC = "color/detection"
 CLIENT_ID = "PicoW_ColorReceiver"
 
