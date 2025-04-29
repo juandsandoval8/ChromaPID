@@ -93,7 +93,4 @@ Este proyecto tiene como objetivo desarrollar un sistema de control automatizado
    - Verificar la correcta conversión de colores y el funcionamiento del control PID de temperatura.
 
 
-# Notas
-Este repositorio tiene una rama llamada actualización donde estan subidos los diagramas y los codigos nuevos a usar, por favor tenerlo enc uenta
-
 # El grupo G10 de digitales les desea todos sus visitante "kisses and hugs".
