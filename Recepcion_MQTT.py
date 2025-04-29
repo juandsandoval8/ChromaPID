@@ -7,10 +7,6 @@ from umqtt.simple import MQTTClient
 from onewire import OneWire
 from ds18x20 import DS18X20
 
-# == Configuración WiFi ==
-WIFI_SSID = "tu_ssid"
-WIFI_PASSWORD = "tu_password"
-
 # == Configuración MQTT ==
 MQTT_BROKER = "192.168.1.17"  # IP del broker MQTT
 MQTT_TOPIC = "color/detection"
