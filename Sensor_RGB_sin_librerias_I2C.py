@@ -18,7 +18,7 @@ TCS34725_BDATAL = 0x1A
 TCS34725_ATIME = 0x01
 
 # Configuración del MQTT
-MQTT_BROKER = "localhost"  # Cambia esto a la dirección IP de tu broker MQTT si es diferente
+MQTT_BROKER = "192.168.17"  # Cambia esto a la dirección IP de tu broker MQTT si es diferente
 MQTT_PORT = 1883
 MQTT_TOPIC_PUBLISH = "sensor/color"
 MQTT_TOPIC_SUBSCRIBE = "control/color_request"
