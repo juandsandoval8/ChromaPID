@@ -3,7 +3,7 @@ import time
 import json
 import _thread
 from machine import Pin, PWM
-from umqtt.simple import MQTTClient
+from umqtt_simple import MQTTClient
 from onewire import OneWire
 from ds18x20 import DS18X20
 
